@@ -61,4 +61,113 @@
         #recognized-text { color: #00796b; font-weight: bold; }
         #score-value { font-size: 24px; font-weight: bold; }
         .excellent { color: #4CAF50; }
-        .good { color: #ff9800;
+        .good { color: #ff9800; }
+        .poor { color: #f44336; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Luyện Phát Âm Tiếng Trung</h2>
+    <p>Hãy nhấn nút và đọc to câu dưới đây:</p>
+    
+    <div class="target-box">
+        <p id="target-chinese">你好，很高兴认识你</p>
+        <p id="target-pinyin">(Nǐ hǎo, hěn gāoxìng rènshí nǐ)</p>
+    </div>
+
+    <button id="start-btn">🎤 Bắt đầu ghi âm</button>
+
+    <div class="result-box">
+        <p><strong>Máy nghe được:</strong> <span id="recognized-text">...</span></p>
+        <p><strong>Điểm của bạn:</strong> <span id="score-value">0/100</span></p>
+        <p id="feedback-msg"></p>
+    </div>
+</div>
+
+<script>
+    // Kiểm tra hỗ trợ của trình duyệt
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Vui lòng sử dụng Google Chrome trên PC hoặc Android.");
+    } else {
+        const recognition = new SpeechRecognition();
+        
+        // Thiết lập ngôn ngữ tiếng Trung (Giản thể)
+        recognition.lang = 'zh-CN'; 
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        // Từ khóa gốc để chấm điểm (bỏ dấu câu)
+        const targetText = "你好很高兴认识你"; 
+        
+        const startBtn = document.getElementById('start-btn');
+        const recognizedTextEl = document.getElementById('recognized-text');
+        const scoreValueEl = document.getElementById('score-value');
+        const feedbackMsgEl = document.getElementById('feedback-msg');
+
+        startBtn.addEventListener('click', () => {
+            recognition.start();
+            startBtn.textContent = "🔴 Đang nghe...";
+            startBtn.disabled = true;
+            recognizedTextEl.textContent = "...";
+            scoreValueEl.textContent = "0/100";
+            feedbackMsgEl.textContent = "";
+            scoreValueEl.className = "";
+        });
+
+        // Khi người dùng dừng nói
+        recognition.onspeechend = () => {
+            recognition.stop();
+            startBtn.textContent = "🎤 Bắt đầu ghi âm";
+            startBtn.disabled = false;
+        };
+
+        // Xử lý kết quả trả về từ Google
+        recognition.onresult = (event) => {
+            // Lấy kết quả và loại bỏ các dấu câu tiếng Trung/tiếng Anh
+            let transcript = event.results[0][0].transcript;
+            let cleanTranscript = transcript.replace(/[.,!?，。！？]/g, ''); 
+            
+            recognizedTextEl.textContent = transcript;
+            
+            // Thuật toán chấm điểm đơn giản: Đếm số ký tự khớp với câu gốc
+            let matchCount = 0;
+            for (let i = 0; i < cleanTranscript.length; i++) {
+                if (targetText.includes(cleanTranscript[i])) {
+                    matchCount++;
+                }
+            }
+            
+            // Tính phần trăm điểm
+            let score = Math.round((matchCount / targetText.length) * 100);
+            if (score > 100) score = 100;
+
+            // Hiển thị điểm và đánh giá
+            scoreValueEl.textContent = score + "/100";
+            
+            if (score === 100) {
+                scoreValueEl.className = 'excellent';
+                feedbackMsgEl.textContent = "Hoàn hảo! Phát âm cực chuẩn.";
+            } else if (score >= 60) {
+                scoreValueEl.className = 'good';
+                feedbackMsgEl.textContent = "Khá tốt, nhưng cần luyện tập thêm một chút!";
+            } else {
+                scoreValueEl.className = 'poor';
+                feedbackMsgEl.textContent = "Sai khá nhiều rồi, hãy nghe và thử lại nhé.";
+            }
+        };
+
+        // Xử lý lỗi (không có mic, không nghe thấy...)
+        recognition.onerror = (event) => {
+            console.error("Lỗi: ", event.error);
+            startBtn.textContent = "🎤 Bắt đầu ghi âm";
+            startBtn.disabled = false;
+            recognizedTextEl.textContent = "Lỗi: Không nghe rõ hoặc chưa cấp quyền Mic!";
+        };
+    }
+</script>
+
+</body>
+</html>
