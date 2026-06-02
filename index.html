@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Chấm Điểm Phát Âm Tiếng Trung</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f4f7f6;
+            margin-top: 50px;
+        }
+        .container {
+            background-color: white;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 { color: #333; }
+        .target-box {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #target-chinese {
+            font-size: 28px;
+            color: #1565c0;
+            font-weight: bold;
+            margin: 0;
+        }
+        #target-pinyin {
+            font-size: 16px;
+            color: #555;
+            margin-top: 5px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #e64a19; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .result-box {
+            margin-top: 25px;
+            text-align: left;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        #recognized-text { color: #00796b; font-weight: bold; }
+        #score-value { font-size: 24px; font-weight: bold; }
+        .excellent { color: #4CAF50; }
+        .good { color: #ff9800;
